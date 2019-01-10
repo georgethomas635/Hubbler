@@ -55,11 +55,6 @@ public class DashboardActivity extends AppCompatActivity implements DashboardAct
         mPresenter.showRegisteredUserDetails();
     }
 
-    @Override
-    public void showErrorMessage(int errorMessageId, boolean hasRetryOption, String tag) {
-
-    }
-
     @OnClick(R.id.fab_add)
     public void addNewPersonDetails() {
         navigateToNewUserDetailsActivity();

@@ -51,7 +51,8 @@ public class CustomeDropDown extends RelativeLayout {
     }
 
     public void setDropdownOptions(String[] options, Context context) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_expandable_list_item_1, options);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
+                android.R.layout.simple_expandable_list_item_1, options);
         spDropdown.setAdapter(adapter);
     }
 

@@ -28,7 +28,8 @@ import butterknife.OnClick;
  * Created by george
  * on 06/01/19.
  */
-public class NewUserDetailsActivity extends AppCompatActivity implements NewUserDetailsActivityContracts.View {
+public class NewUserDetailsActivity extends AppCompatActivity
+        implements NewUserDetailsActivityContracts.View {
 
     @BindView(R.id.rl_foam)
     LinearLayout rlUserFoam;
@@ -48,11 +49,6 @@ public class NewUserDetailsActivity extends AppCompatActivity implements NewUser
         mPresenter = new NewUserDetailsActivityPresenter(
                 AppUtils.convertJsonStringToModel(Constants.FOAM_STRUCTURE));
         mPresenter.attach(this);
-    }
-
-    @Override
-    public void showErrorMessage(int errorMessageId, boolean hasRetryOption, String tag) {
-
     }
 
     @Override

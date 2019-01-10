@@ -1,7 +1,6 @@
 package com.geo.hubblerfoam.contracts.activities;
 
 import com.geo.hubblerfoam.contracts.BasePresenter;
-import com.geo.hubblerfoam.contracts.BaseView;
 
 import org.json.JSONObject;
 
@@ -11,7 +10,7 @@ import org.json.JSONObject;
  */
 public interface NewUserDetailsActivityContracts {
 
-    interface View extends BaseView {
+    interface View {
 
         void addTextField(String fieldName, boolean required, int position);
 

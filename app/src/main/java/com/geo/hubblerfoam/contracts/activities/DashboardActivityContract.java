@@ -1,7 +1,6 @@
 package com.geo.hubblerfoam.contracts.activities;
 
 import com.geo.hubblerfoam.contracts.BasePresenter;
-import com.geo.hubblerfoam.contracts.BaseView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,7 +11,7 @@ import org.json.JSONObject;
  */
 public interface DashboardActivityContract {
 
-    interface View extends BaseView {
+    interface View {
 
         void navigateToNewUserDetailsActivity();
 
