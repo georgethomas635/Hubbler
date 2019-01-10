@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">HubblerFoam</string>
+    <string name="done">Done</string>
+    <string name="total_reports">Total Reports:</string>
+    <string name="no_reports_found">Sorry, no reports found!</string>
+    <string name="enter_value">Enter value</string>
+    <string name="this_field_is_required">Required Field</string>
+    <string name="user_details">User Details</string>
+    <string name="field_is_required">field is mandatory</string>
+    <string name="set_bounds">There is minimum and maximun limit for</string>
+    <string name="min">&#160;minimum&#160;</string>
+    <string name="max">&#160;maximum&#160;</string>
+    <string name="colon">:</string>
+</resources>
