@@ -10,6 +10,8 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import static com.geo.hubblerfoam.app.Constants.ZERO;
+
 /**
  * Created by george
  * on 06/01/19.
@@ -20,9 +22,11 @@ public class NewUserDetailsActivityPresenter implements NewUserDetailsActivityCo
     private NewUserDetailsActivityContracts.View mView;
     private List<InputFieldModel> foamStructureJson;
     private JSONObject jsonObject = new JSONObject();
+    private int childNumber;
 
-    public NewUserDetailsActivityPresenter(List<InputFieldModel> foamStructure) {
+    public NewUserDetailsActivityPresenter(List<InputFieldModel> foamStructure, int childNumber) {
         foamStructureJson = foamStructure;
+        this.childNumber = childNumber;
     }
 
     @Override
@@ -37,7 +41,7 @@ public class NewUserDetailsActivityPresenter implements NewUserDetailsActivityCo
 
     @Override
     public void setupUserDetailsFoam() {
-        int index = 0;
+        int index = ZERO;
         if (foamStructureJson != null) {
             for (InputFieldModel fieldModel : foamStructureJson) {
                 switch (fieldModel.getType()) {
@@ -53,6 +57,9 @@ public class NewUserDetailsActivityPresenter implements NewUserDetailsActivityCo
                     case Constants.INPUTFIELD_DROPDOWN:
                         mView.addDropdown(fieldModel.getFieldName(), fieldModel.getOptions(), index);
                         break;
+                    case Constants.INPUTFIELD_COMPOSITE:
+                        mView.addComposite(fieldModel.getFieldName(), index, fieldModel.getFields());
+                        break;
                 }
                 index++;
             }
@@ -61,7 +68,7 @@ public class NewUserDetailsActivityPresenter implements NewUserDetailsActivityCo
 
     @Override
     public void validateData() {
-        int index = 0;
+        int index = ZERO;
         boolean validationCheck = true;
         for (InputFieldModel fieldModel : foamStructureJson) {
             if (fieldModel.isRequired()) {
@@ -69,23 +76,48 @@ public class NewUserDetailsActivityPresenter implements NewUserDetailsActivityCo
                     validationCheck = false;
                     mView.shoeErrorMessage(fieldModel.getFieldName(), R.string.field_is_required);
                 }
-            } else if (fieldModel.getMax() != Constants.ZERO) {
+            } else if (fieldModel.getMax() != ZERO) {
                 if (!mView.minMaxValidate(index, fieldModel.getMin(), fieldModel.getMax())) {
                     validationCheck = false;
                     mView.shoeErrorMessage(fieldModel.getFieldName(), R.string.set_bounds, fieldModel.getMin(), fieldModel.getMax());
                 }
             }
-            if (fieldModel.getType().equals(Constants.INPUTFIELD_DROPDOWN)) {
-                createJsonStucture(fieldModel.getFieldName(), mView.getValueOfDropdown(fieldModel.getFieldName(), index));
-            } else {
-                createJsonStucture(fieldModel.getFieldName(), mView.getValueOf(fieldModel.getFieldName(), index));
-            }
+            createJSON(fieldModel, index);
             index++;
         }
         if (validationCheck) {
-            mView.saveData(jsonObject);
+            if (childNumber == 0) {
+                mView.saveData(jsonObject);
+            } else {
+                mView.saveCompositeData(jsonObject);
+            }
             mView.navigateToHome();
         }
+    }
+
+    private void createJSON(InputFieldModel fieldModel, int index) {
+        switch (fieldModel.getType()) {
+            case Constants.INPUTFIELD_DROPDOWN:
+                createJsonStucture(fieldModel.getFieldName(), mView.getValueOfDropdown(fieldModel.getFieldName(), index));
+                break;
+            case Constants.INPUTFIELD_COMPOSITE:
+                addCompositeField(fieldModel);
+                break;
+            default:
+                createJsonStucture(fieldModel.getFieldName(), mView.getValueOf(fieldModel.getFieldName(), index));
+                break;
+        }
+    }
+
+    private void addCompositeField(InputFieldModel fieldModel) {
+        JSONObject userCompositeDetails = mView.getUserCompositeData();
+        if (userCompositeDetails != null) {
+            if (!userCompositeDetails.keys().next().equals(jsonObject.keys().next())) {
+                createJsonStucture(fieldModel.getFieldName(), userCompositeDetails.toString());
+            }
+            mView.saveCompositeData(new JSONObject());
+        }
+
     }
 
     private void createJsonStucture(String key, String item) {

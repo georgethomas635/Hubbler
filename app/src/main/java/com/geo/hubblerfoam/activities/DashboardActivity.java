@@ -2,6 +2,7 @@ package com.geo.hubblerfoam.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,11 +11,15 @@ import android.widget.TextView;
 
 import com.geo.hubblerfoam.R;
 import com.geo.hubblerfoam.adapters.UserReportAdapter;
+import com.geo.hubblerfoam.app.Constants;
 import com.geo.hubblerfoam.app.Preference;
 import com.geo.hubblerfoam.contracts.activities.DashboardActivityContract;
 import com.geo.hubblerfoam.presenters.DashboardActivityPresenter;
+import com.geo.hubblerfoam.utils.AppUtils;
 
 import org.json.JSONArray;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -64,6 +69,8 @@ public class DashboardActivity extends AppCompatActivity implements DashboardAct
     @Override
     public void navigateToNewUserDetailsActivity() {
         Intent intent = new Intent(this, NewUserDetailsActivity.class);
+        intent.putParcelableArrayListExtra(Constants.FOAM_DATA, (ArrayList<? extends Parcelable>)
+                AppUtils.convertJsonStringToModel(Constants.FOAM_STRUCTURE));
         startActivity(intent);
     }
 
