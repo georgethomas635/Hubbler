@@ -11,6 +11,8 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import static com.geo.hubblerfoam.app.Constants.ONE;
+
 /**
  * Created by george
  * on 09/01/19.
@@ -42,8 +44,8 @@ public class UserReportAdapterPresenter implements UserReportAdapterContracts.Pr
             List<InputFieldModel> userFoam = AppUtils.convertJsonStringToModel(Constants.FOAM_STRUCTURE);
             mView.setUserDetails(userFoam.get(Constants.ZERO).getFieldName() + Constants.COLON + Constants.SPACE +
                             userRecord.get(userFoam.get(Constants.ZERO).getFieldName()),
-                    userFoam.get(Constants.ONE).getFieldName() + Constants.COLON + Constants.SPACE +
-                            userRecord.get(userFoam.get(Constants.ONE).getFieldName()));
+                    userFoam.get(ONE).getFieldName() + Constants.COLON + Constants.SPACE +
+                            userRecord.get(userFoam.get(ONE).getFieldName()));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -54,7 +56,7 @@ public class UserReportAdapterPresenter implements UserReportAdapterContracts.Pr
         if (position == Constants.ZERO) {
             mView.hideTopView();
         }
-        if (position == userlist.length() - 1) {
+        if (position == userlist.length() - ONE) {
             mView.hideBottomView();
         }
     }

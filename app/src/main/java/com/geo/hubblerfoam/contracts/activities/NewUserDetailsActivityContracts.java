@@ -3,7 +3,6 @@ package com.geo.hubblerfoam.contracts.activities;
 import com.geo.hubblerfoam.contracts.BasePresenter;
 import com.geo.hubblerfoam.model.InputFieldModel;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -42,9 +41,9 @@ public interface NewUserDetailsActivityContracts {
 
         void addComposite(String fieldName, int index, List<InputFieldModel> fields);
 
-        JSONObject getUserDetails();
+        void saveCompositeData(JSONObject jsonObject);
 
-        void removeLastItem(JSONArray userList);
+        JSONObject getUserCompositeData();
     }
 
     interface Presenter extends BasePresenter<View> {

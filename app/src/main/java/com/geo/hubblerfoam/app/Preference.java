@@ -77,10 +77,6 @@ public class Preference {
         saveDataAsJson(KEY_USERFOAM_DATA, userList);
     }
 
-    public void reWriteUserDetails(JSONObject jsonObject) {
-        saveDataAsJson(KEY_USERFOAM_DATA, jsonObject);
-    }
-
     public JSONObject getUserDetails() {
         String userDetails = sSharedPref.getString(KEY_USERFOAM_DATA, Constants.EMPTY);
         try {

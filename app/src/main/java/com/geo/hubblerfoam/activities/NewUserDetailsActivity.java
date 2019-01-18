@@ -21,8 +21,6 @@ import com.geo.hubblerfoam.presenters.NewUserDetailsActivityPresenter;
 import com.geo.hubblerfoam.widgets.CustomeDropDown;
 import com.geo.hubblerfoam.widgets.CustomeTextView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -59,7 +57,7 @@ public class NewUserDetailsActivity extends AppCompatActivity
 
     private void initPresenter() {
         childNumber = getIntent().getIntExtra(Constants.CHILD_NUMBER, 0);
-        mPresenter = new NewUserDetailsActivityPresenter(getIntent().getParcelableArrayListExtra(Constants.FOAM_DATA));
+        mPresenter = new NewUserDetailsActivityPresenter(getIntent().getParcelableArrayListExtra(Constants.FOAM_DATA), childNumber);
         mPresenter.attach(this);
     }
 
@@ -169,19 +167,14 @@ public class NewUserDetailsActivity extends AppCompatActivity
     }
 
     @Override
-    public JSONObject getUserDetails() {
-        return Preference.getInstance(this).getUserDetails();
+    public void saveCompositeData(JSONObject jsonObject) {
+        Preference.getInstance(this).saveUserCompositeData(jsonObject);
+        Log.e(getResources().getString(R.string.user_details), jsonObject.toString());
     }
 
     @Override
-    public void removeLastItem(JSONArray userList) {
-        JSONObject userListObject = new JSONObject();
-        try {
-            userListObject.put(Constants.USER_LIST, userList);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Preference.getInstance(this).reWriteUserDetails(userListObject);
+    public JSONObject getUserCompositeData() {
+        return Preference.getInstance(this).getUserCompositeData();
     }
 
     private void navigateToNewPage(List<InputFieldModel> fields) {
