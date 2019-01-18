@@ -5,10 +5,14 @@ import com.geo.hubblerfoam.app.Constants;
 import com.geo.hubblerfoam.contracts.activities.NewUserDetailsActivityContracts;
 import com.geo.hubblerfoam.model.InputFieldModel;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+
+import static com.geo.hubblerfoam.app.Constants.ONE;
+import static com.geo.hubblerfoam.app.Constants.ZERO;
 
 /**
  * Created by george
@@ -37,7 +41,7 @@ public class NewUserDetailsActivityPresenter implements NewUserDetailsActivityCo
 
     @Override
     public void setupUserDetailsFoam() {
-        int index = 0;
+        int index = ZERO;
         if (foamStructureJson != null) {
             for (InputFieldModel fieldModel : foamStructureJson) {
                 switch (fieldModel.getType()) {
@@ -53,6 +57,9 @@ public class NewUserDetailsActivityPresenter implements NewUserDetailsActivityCo
                     case Constants.INPUTFIELD_DROPDOWN:
                         mView.addDropdown(fieldModel.getFieldName(), fieldModel.getOptions(), index);
                         break;
+                    case Constants.INPUTFIELD_COMPOSITE:
+                        mView.addComposite(fieldModel.getFieldName(), index, fieldModel.getFields());
+                        break;
                 }
                 index++;
             }
@@ -61,7 +68,7 @@ public class NewUserDetailsActivityPresenter implements NewUserDetailsActivityCo
 
     @Override
     public void validateData() {
-        int index = 0;
+        int index = ZERO;
         boolean validationCheck = true;
         for (InputFieldModel fieldModel : foamStructureJson) {
             if (fieldModel.isRequired()) {
@@ -69,22 +76,46 @@ public class NewUserDetailsActivityPresenter implements NewUserDetailsActivityCo
                     validationCheck = false;
                     mView.shoeErrorMessage(fieldModel.getFieldName(), R.string.field_is_required);
                 }
-            } else if (fieldModel.getMax() != Constants.ZERO) {
+            } else if (fieldModel.getMax() != ZERO) {
                 if (!mView.minMaxValidate(index, fieldModel.getMin(), fieldModel.getMax())) {
                     validationCheck = false;
                     mView.shoeErrorMessage(fieldModel.getFieldName(), R.string.set_bounds, fieldModel.getMin(), fieldModel.getMax());
                 }
             }
-            if (fieldModel.getType().equals(Constants.INPUTFIELD_DROPDOWN)) {
-                createJsonStucture(fieldModel.getFieldName(), mView.getValueOfDropdown(fieldModel.getFieldName(), index));
-            } else {
-                createJsonStucture(fieldModel.getFieldName(), mView.getValueOf(fieldModel.getFieldName(), index));
+            switch (fieldModel.getType()) {
+                case Constants.INPUTFIELD_DROPDOWN:
+                    createJsonStucture(fieldModel.getFieldName(), mView.getValueOfDropdown(fieldModel.getFieldName(), index));
+                    break;
+                case Constants.INPUTFIELD_COMPOSITE:
+                    addCompositeField(fieldModel);
+                    break;
+                default:
+                    createJsonStucture(fieldModel.getFieldName(), mView.getValueOf(fieldModel.getFieldName(), index));
+                    break;
             }
             index++;
         }
         if (validationCheck) {
             mView.saveData(jsonObject);
             mView.navigateToHome();
+        }
+    }
+
+    private void addCompositeField(InputFieldModel fieldModel) {
+        JSONObject userDetails = mView.getUserDetails();
+        if (userDetails != null) {
+            try {
+                JSONArray userlist = (JSONArray) userDetails.get(Constants.USER_LIST);
+                if (((JSONObject) userlist.get(userlist.length() - ONE)).keys().next().
+                        equals(fieldModel.getFields().get(ZERO).getFieldName())) {
+                    createJsonStucture(fieldModel.getFieldName(), (userlist.get(userlist.length() - ONE)).
+                            toString().replace(Constants.SLASH, Constants.EMPTY));
+                    userlist.remove(userlist.length() - ONE);
+                    mView.removeLastItem(userlist);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 

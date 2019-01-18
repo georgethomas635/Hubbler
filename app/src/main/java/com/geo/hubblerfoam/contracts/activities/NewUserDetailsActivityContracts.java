@@ -1,8 +1,12 @@
 package com.geo.hubblerfoam.contracts.activities;
 
 import com.geo.hubblerfoam.contracts.BasePresenter;
+import com.geo.hubblerfoam.model.InputFieldModel;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.List;
 
 /**
  * Created by george
@@ -35,6 +39,12 @@ public interface NewUserDetailsActivityContracts {
         void shoeErrorMessage(String fieldName, int errorMessage, int min, int max);
 
         void navigateToHome();
+
+        void addComposite(String fieldName, int index, List<InputFieldModel> fields);
+
+        JSONObject getUserDetails();
+
+        void removeLastItem(JSONArray userList);
     }
 
     interface Presenter extends BasePresenter<View> {

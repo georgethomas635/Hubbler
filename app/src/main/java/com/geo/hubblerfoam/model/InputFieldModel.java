@@ -1,12 +1,17 @@
 package com.geo.hubblerfoam.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.List;
 
 /**
  * Created by george
  * on 06/01/19.
  */
-public class InputFieldModel {
+public class InputFieldModel implements Parcelable {
 
     @JsonProperty("field-name")
     private String fieldName;
@@ -21,7 +26,32 @@ public class InputFieldModel {
 
     private String[] options;
 
-    private boolean validation;
+    public static final Creator<InputFieldModel> CREATOR = new Creator<InputFieldModel>() {
+        @Override
+        public InputFieldModel createFromParcel(Parcel in) {
+            return new InputFieldModel(in);
+        }
+
+        @Override
+        public InputFieldModel[] newArray(int size) {
+            return new InputFieldModel[size];
+        }
+    };
+    private List<InputFieldModel> fields;
+
+
+    public InputFieldModel() {
+    }
+
+    private InputFieldModel(Parcel in) {
+        fieldName = in.readString();
+        required = in.readByte() != 0;
+        type = in.readString();
+        min = in.readInt();
+        max = in.readInt();
+        options = in.createStringArray();
+        fields = in.createTypedArrayList(InputFieldModel.CREATOR);
+    }
 
     public String getFieldName() {
         return fieldName;
@@ -43,11 +73,28 @@ public class InputFieldModel {
         return max;
     }
 
-    public void setValidation(boolean validation) {
-        this.validation = validation;
-    }
-
     public String[] getOptions() {
         return options;
+    }
+
+    public List<InputFieldModel> getFields() {
+        return fields;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+        dest.writeString(fieldName);
+        dest.writeByte((byte) (required ? 1 : 0));
+        dest.writeString(type);
+        dest.writeInt(min);
+        dest.writeInt(max);
+        dest.writeStringArray(options);
+        dest.writeTypedList(fields);
     }
 }

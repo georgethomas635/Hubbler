@@ -1,9 +1,12 @@
 package com.geo.hubblerfoam.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -13,16 +16,24 @@ import com.geo.hubblerfoam.R;
 import com.geo.hubblerfoam.app.Constants;
 import com.geo.hubblerfoam.app.Preference;
 import com.geo.hubblerfoam.contracts.activities.NewUserDetailsActivityContracts;
+import com.geo.hubblerfoam.model.InputFieldModel;
 import com.geo.hubblerfoam.presenters.NewUserDetailsActivityPresenter;
-import com.geo.hubblerfoam.utils.AppUtils;
 import com.geo.hubblerfoam.widgets.CustomeDropDown;
 import com.geo.hubblerfoam.widgets.CustomeTextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.geo.hubblerfoam.app.Constants.ONE;
+import static com.geo.hubblerfoam.app.Constants.ZERO;
 
 /**
  * Created by george
@@ -35,6 +46,7 @@ public class NewUserDetailsActivity extends AppCompatActivity
     LinearLayout rlUserFoam;
 
     private NewUserDetailsActivityPresenter mPresenter;
+    private int childNumber = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,8 +58,8 @@ public class NewUserDetailsActivity extends AppCompatActivity
     }
 
     private void initPresenter() {
-        mPresenter = new NewUserDetailsActivityPresenter(
-                AppUtils.convertJsonStringToModel(Constants.FOAM_STRUCTURE));
+        childNumber = getIntent().getIntExtra(Constants.CHILD_NUMBER, 0);
+        mPresenter = new NewUserDetailsActivityPresenter(getIntent().getParcelableArrayListExtra(Constants.FOAM_DATA));
         mPresenter.attach(this);
     }
 
@@ -147,5 +159,50 @@ public class NewUserDetailsActivity extends AppCompatActivity
     @Override
     public void navigateToHome() {
         finish();
+    }
+
+    @Override
+    public void addComposite(String fieldName, int index, List<InputFieldModel> fields) {
+        Button buttonField = createButton(index, fieldName);
+        rlUserFoam.addView(buttonField);
+        buttonField.setOnClickListener(v -> navigateToNewPage(fields));
+    }
+
+    @Override
+    public JSONObject getUserDetails() {
+        return Preference.getInstance(this).getUserDetails();
+    }
+
+    @Override
+    public void removeLastItem(JSONArray userList) {
+        JSONObject userListObject = new JSONObject();
+        try {
+            userListObject.put(Constants.USER_LIST, userList);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Preference.getInstance(this).reWriteUserDetails(userListObject);
+    }
+
+    private void navigateToNewPage(List<InputFieldModel> fields) {
+        Intent intent = new Intent(this, NewUserDetailsActivity.class);
+        intent.putExtra(Constants.CHILD_NUMBER, childNumber + ONE);
+        intent.putParcelableArrayListExtra(Constants.FOAM_DATA, (ArrayList<? extends Parcelable>)
+                fields);
+        startActivity(intent);
+    }
+
+    private Button createButton(int index, String fieldName) {
+        Button btnTag = new Button(this);
+        btnTag.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) btnTag.getLayoutParams();
+        params.setMargins(ZERO, 20, ZERO, 10);
+        btnTag.setLayoutParams(params);
+        String buttonName = getResources().getString(R.string.add) + fieldName;
+        btnTag.setText(buttonName);
+        btnTag.setId(index);
+        btnTag.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        return btnTag;
     }
 }

@@ -16,6 +16,7 @@ import org.json.JSONObject;
 public class Preference {
 
     private static final String KEY_USERFOAM_DATA = "FOAM_DATA";
+    private static final String KEY_COMPOSITE_DATA = "COMPOSITE_DATA";
 
     @SuppressLint("StaticFieldLeak")
     private static Preference sSharedManager;
@@ -76,6 +77,10 @@ public class Preference {
         saveDataAsJson(KEY_USERFOAM_DATA, userList);
     }
 
+    public void reWriteUserDetails(JSONObject jsonObject) {
+        saveDataAsJson(KEY_USERFOAM_DATA, jsonObject);
+    }
+
     public JSONObject getUserDetails() {
         String userDetails = sSharedPref.getString(KEY_USERFOAM_DATA, Constants.EMPTY);
         try {
@@ -84,5 +89,19 @@ public class Preference {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public JSONObject getUserCompositeData() {
+        String userDetails = sSharedPref.getString(KEY_COMPOSITE_DATA, Constants.EMPTY);
+        try {
+            return new JSONObject(userDetails);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void saveUserCompositeData(JSONObject jsonObject) {
+        saveDataAsJson(KEY_COMPOSITE_DATA, jsonObject);
     }
 }
